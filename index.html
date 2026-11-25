@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>DivideConto</title>
+<meta name="theme-color" content="#0E1016">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DivideConto">
+<style>
+:root{--bg:#0E1016;--s1:#171A23;--s2:#212633;--line:#2B3142;--tx:#F2F4F8;--mu:#8D95A9;--ac:#7B61FF;--ac2:#A593FF;--ok:#38E0A0;--ko:#FF6B7A;--ff:ui-rounded,"SF Pro Rounded",-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 var(--ff)}
+body{min-height:100dvh;padding-top:env(safe-area-inset-top);background:radial-gradient(120% 50% at 50% -10%,#221b4d 0%,var(--bg) 65%) no-repeat var(--bg)}
+.wrap{max-width:560px;margin:0 auto;padding:10px 16px 140px}
+header{display:flex;justify-content:space-between;align-items:center;padding:6px 0 14px}
+.logo{font-weight:800;font-size:21px;letter-spacing:-.03em}.logo i{font-style:normal;color:var(--ac2)}
+.stepper{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:22px}
+.stepper button{background:none;border:0;border-bottom:3px solid var(--line);color:var(--mu);padding:10px 0;font:600 14px var(--ff);cursor:pointer}
+.stepper button.on{color:var(--tx);border-color:var(--ac)}
+.stepper button:disabled{opacity:.4}
+h2{font-size:27px;letter-spacing:-.03em;margin:0 0 16px}
+h3{font-size:15px;margin:26px 0 10px;color:var(--mu);font-weight:600}
+h3 small{font-weight:400}
+.lbl{display:block;color:var(--mu);font-size:14px;margin:0 0 6px}
+.in,select{width:100%;min-height:52px;background:var(--s1);border:1.5px solid var(--line);border-radius:14px;color:var(--tx);font:17px var(--ff);padding:0 14px}
+.in:focus,select:focus,.btn:focus-visible,.ico:focus-visible,.chip:focus-visible,.stepper button:focus-visible{outline:2px solid var(--ac2);outline-offset:2px}
+.line{display:flex;gap:8px;align-items:center;margin-top:10px}
+.money{position:relative;flex:1}.money .in{padding-right:34px;font-variant-numeric:tabular-nums}
+.money>span{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--mu);pointer-events:none}
+.big .in{font-size:36px;font-weight:700;min-height:76px;border-radius:20px}.big>span{font-size:22px}
+.btn{min-height:54px;border-radius:16px;border:0;padding:0 20px;font:700 16px var(--ff);color:#fff;background:var(--ac);cursor:pointer}
+.btn.ghost{background:var(--s2);color:var(--tx)}.btn.danger{background:none;color:var(--ko);border:1.5px solid #4a2830}
+.btn:disabled{opacity:.35}.btn:active{transform:scale(.98)}
+.btn.block{width:100%;margin-top:10px}
+.ico{width:44px;height:44px;flex:none;border-radius:12px;border:0;background:var(--s2);color:var(--mu);font-size:16px;cursor:pointer}
+.chip{min-height:52px;padding:0 14px;border-radius:14px;border:1.5px solid var(--line);background:none;color:var(--ac2);font:600 14px var(--ff);cursor:pointer;white-space:nowrap}
+.card{background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:10px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.row{display:flex;align-items:center;gap:12px;background:var(--s1);border-radius:16px;padding:8px 8px 8px 12px;margin-bottom:8px}
+.av{width:38px;height:38px;border-radius:50%;background:var(--ac);display:grid;place-items:center;font-weight:700;flex:none}
+.grow{flex:1;min-width:0;overflow-wrap:anywhere}
+.add{display:flex;gap:8px;margin-top:14px}.add .btn{flex:none}
+.empty{color:var(--mu);margin:8px 2px}
+.sw{display:flex;align-items:center;gap:8px;color:var(--mu);font-size:14px;cursor:pointer;position:relative}
+.sw input{position:absolute;opacity:0;width:44px;height:26px;margin:0}
+.sw i{width:44px;height:26px;border-radius:13px;background:var(--s2);position:relative;transition:background .15s;flex:none}
+.sw i::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .15s}
+.sw input:checked+i{background:var(--ok)}.sw input:checked+i::after{transform:translateX(18px)}
+.sw input:focus-visible+i{outline:2px solid var(--ac2);outline-offset:2px}
+.meta{margin-top:22px;border-radius:18px;background:var(--s1);padding:6px 14px}
+.meta div{display:flex;justify-content:space-between;padding:9px 0;color:var(--mu);font-size:14px}
+.meta div+div{border-top:1px solid var(--line)}.meta b{color:var(--tx);font-variant-numeric:tabular-nums}
+.okc{color:var(--ok)!important}
+.alert{background:#2b1a20;border:1px solid #5a2a35;color:#ffb8c0;border-radius:16px;padding:14px;margin-bottom:10px}
+.hero{border-radius:24px;padding:22px;background:linear-gradient(140deg,#2d2470,#171A23 80%);margin-bottom:4px}
+.hero span{color:var(--ac2);font-size:14px}.hero b{display:block;font-size:44px;letter-spacing:-.04em;line-height:1.1;font-variant-numeric:tabular-nums}
+.tx{display:flex;align-items:center;gap:8px;background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:8px}
+.tx .arr{color:var(--mu)}.tx em{margin-left:auto;font-style:normal;font-weight:800;font-size:19px;color:var(--ok);font-variant-numeric:tabular-nums}
+.q{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.q:last-child{border:0}.q small{display:block;color:var(--mu)}.q b{font-variant-numeric:tabular-nums}
+.pos{color:var(--ok)}.neg{color:var(--ko)}
+.bar{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:560px;display:flex;gap:10px;padding:26px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 40%)}
+.bar .btn{flex:1}
+#toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--tx);color:var(--bg);padding:12px 18px;border-radius:14px;font-weight:600;opacity:0;pointer-events:none;transition:.2s;z-index:9}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><div class="logo">Divide<i>Conto</i></div><button class="chip" data-a="new">Nuovo conto</button></header>
+  <div id="app"></div>
+</div>
+<div class="bar" id="bar"></div>
+<div id="toast" role="status"></div>
+<script>
+'use strict';
+/* ---------- util ---------- */
+const $ = s => document.querySelector(s), app = $('#app'), bar = $('#bar');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Math.random().toString(36).slice(2, 9);
+const toC = v => Math.round((parseFloat(String(v).replace(',', '.')) || 0) * 100);
+const fmt = c => (c < 0 ? '-' : '') + (Math.abs(c) / 100).toFixed(2).replace('.', ',') + ' €';
+
+/* ---------- stato + persistenza ---------- */
+const KEY = 'divideconto.v1';
+const fresh = () => ({ step: 0, title: '', total: '', people: [], extras: [] });
+let S;
+try { S = Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY))); } catch (e) { S = fresh(); }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const P = id => S.people.find(p => p.id === id);
+const X = id => S.extras.find(x => x.id === id);
+const nm = id => (P(id) || {}).name || '?';
+
+/* ---------- calcolo ---------- */
+function calc() {
+  const T = toC(S.total), people = S.people, errors = [];
+  const ex = S.extras.filter(x => toC(x.amount) > 0 && P(x.pid));
+  const E = ex.reduce((a, x) => a + toC(x.amount), 0);
+  const common = T - E, sharers = people.filter(p => p.common);
+  const PD = people.reduce((a, p) => a + toC(p.paid), 0);
+  const share = {}; people.forEach(p => share[p.id] = 0);
+  ex.forEach(x => share[x.pid] += toC(x.amount));
+  if (T <= 0) errors.push('Inserisci il totale dello scontrino.');
+  if (common < 0) errors.push('Le spese singole (' + fmt(E) + ') superano il totale (' + fmt(T) + ').');
+  if (common > 0 && !sharers.length) errors.push('Nessuno divide la spesa comune: attiva "Divide il comune" per almeno una persona.');
+  if (T > 0 && PD !== T) errors.push('Gli anticipi (' + fmt(PD) + ') non coincidono con il totale (' + fmt(T) + '). Differenza: ' + fmt(T - PD) + '.');
+  if (!errors.length) {
+    if (common > 0) {
+      const base = Math.floor(common / sharers.length); let rem = common - base * sharers.length;
+      sharers.forEach(p => { share[p.id] += base + (rem-- > 0 ? 1 : 0); });
+    }
+  }
+  const bal = {}; people.forEach(p => bal[p.id] = toC(p.paid) - share[p.id]);
+  const tx = [];
+  if (!errors.length) {
+    const cr = people.filter(p => bal[p.id] > 0).map(p => ({ p: p.id, v: bal[p.id] }));
+    const db = people.filter(p => bal[p.id] < 0).map(p => ({ p: p.id, v: -bal[p.id] }));
+    const by = (a, b) => b.v - a.v;
+    while (cr.length && db.length) {
+      cr.sort(by); db.sort(by);
+      const a = cr[0], b = db[0], m = Math.min(a.v, b.v);
+      tx.push({ from: b.p, to: a.p, v: m });
+      a.v -= m; b.v -= m;
+      if (!a.v) cr.shift(); if (!b.v) db.shift();
+    }
+  }
+  return { T, E, common, PD, share, bal, tx, errors };
+}
+
+function summary() {
+  const c = calc(); if (c.errors.length) return null;
+  const L = ['🧾 *Riepilogo Conto' + (S.title.trim() ? ' - ' + S.title.trim() : '') + '*',
+    '💶 Totale: ' + fmt(c.T),
+    '👥 Partecipanti: ' + S.people.map(p => p.name).join(', '), '', '🍽️ Quote:'];
+  S.people.forEach(p => L.push('- ' + p.name + ': ' + fmt(c.share[p.id]) + (toC(p.paid) ? ' (ha anticipato ' + fmt(toC(p.paid)) + ')' : '')));
+  L.push('');
+  if (c.tx.length) { L.push('👉 Spostamenti:'); c.tx.forEach(t => L.push('- ' + nm(t.from) + ' ➡️ ' + nm(t.to) + ': ' + fmt(t.v))); }
+  else L.push('✅ Tutto pareggiato, nessun pagamento da fare.');
+  return L.join('\n');
+}
+
+/* ---------- viste ---------- */
+function viewPeople() {
+  return `<h2>Chi c'è a tavola?</h2>
+  <label class="lbl" for="title">Nome della serata (facoltativo)</label>
+  <input class="in" id="title" data-f="title" placeholder="Es. Cena da Mario" value="${esc(S.title)}" autocomplete="off">
+  <h3>Partecipanti</h3>
+  ${S.people.map(p => `<div class="row"><span class="av">${esc((p.name[0] || '?').toUpperCase())}</span><span class="grow">${esc(p.name)}</span><button class="ico" data-a="delp" data-id="${p.id}" aria-label="Rimuovi ${esc(p.name)}">✕</button></div>`).join('') || '<p class="empty">Aggiungi almeno due persone per iniziare.</p>'}
+  <div class="add"><input class="in" id="newname" data-f="newname" placeholder="Nome" autocomplete="off" enterkeyhint="done" aria-label="Nome del partecipante"><button class="btn" data-a="addp">Aggiungi</button></div>`;
+}
+
+function viewExpenses() {
+  const opts = id => S.people.map(p => `<option value="${p.id}" ${p.id === id ? 'selected' : ''}>${esc(p.name)}</option>`).join('');
+  return `<h2>Spese</h2>
+  <label class="lbl" for="total">Totale dello scontrino</label>
+  <div class="money big"><input class="in" id="total" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0,00" data-f="total" value="${esc(S.total)}"><span>€</span></div>
+  <h3>Chi ha anticipato?</h3>
+  ${S.people.map(p => `<div class="card"><div class="top"><b>${esc(p.name)}</b>
+    <label class="sw"><input type="checkbox" data-a="tog" data-id="${p.id}" ${p.common ? 'checked' : ''}><i></i><span>Divide il comune</span></label></div>
+    <div class="line"><div class="money"><input class="in" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0" data-f="paid" data-id="${p.id}" value="${esc(p.paid)}" aria-label="Anticipo di ${esc(p.name)}"><span>€</span></div>
+    <button class="chip" data-a="allpaid" data-id="${p.id}">Ha pagato tutto</button></div></div>`).join('')}
+  <h3>Spese singole <small>facoltativo: es. un amaro, niente dolce</small></h3>
+  ${S.extras.map(x => `<div class="card"><div class="line" style="margin:0 0 8px"><select data-f="expid" data-id="${x.id}" aria-label="Per chi">${opts(x.pid)}</select>
+    <div class="money" style="max-width:130px"><input class="in" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0" data-f="examt" data-id="${x.id}" value="${esc(x.amount)}" aria-label="Importo"><span>€</span></div></div>
+    <div class="line" style="margin:0"><input class="in" data-f="exdesc" data-id="${x.id}" placeholder="Cosa ha preso? (facoltativo)" value="${esc(x.desc)}" autocomplete="off"><button class="ico" data-a="dele" data-id="${x.id}" aria-label="Rimuovi spesa">✕</button></div></div>`).join('')}
+  <button class="btn ghost block" data-a="adde">+ Aggiungi spesa singola</button>
+  <div class="meta" id="meta"></div>`;
+}
+
+function viewResults() {
+  const c = calc();
+  if (c.errors.length) return `<h2>Manca qualcosa</h2>${c.errors.map(e => `<div class="alert">${esc(e)}</div>`).join('')}<p class="empty">Torna a Spese e correggi i dati.</p>`;
+  return `<div class="hero"><span>Totale del conto</span><b>${fmt(c.T)}</b></div>
+  <h3>Chi deve dare a chi</h3>
+  ${c.tx.length ? c.tx.map(t => `<div class="tx"><b>${esc(nm(t.from))}</b><span class="arr">➡️</span><b>${esc(nm(t.to))}</b><em>${fmt(t.v)}</em></div>`).join('') : '<div class="card">Tutto pareggiato: nessun pagamento da fare.</div>'}
+  <h3>Quota a testa</h3>
+  <div class="card" style="padding:2px 14px">${S.people.map(p => `<div class="q"><div><b>${esc(p.name)}</b><small>Anticipato ${fmt(toC(p.paid))}</small></div><div style="text-align:right"><b>${fmt(c.share[p.id])}</b><small class="${c.bal[p.id] > 0 ? 'pos' : c.bal[p.id] < 0 ? 'neg' : ''}">${c.bal[p.id] > 0 ? 'Riceve ' : c.bal[p.id] < 0 ? 'Deve ' : 'In pari'}${c.bal[p.id] ? fmt(Math.abs(c.bal[p.id])) : ''}</small></div></div>`).join('')}</div>
+  <button class="btn ghost block" data-a="wa">Invia su WhatsApp</button>`;
+}
+
+function updateMeta() {
+  const m = $('#meta'); if (!m) return;
+  const c = calc();
+  m.innerHTML = `<div><span>Anticipi inseriti</span><b class="${c.T > 0 && c.PD === c.T ? 'okc' : ''}">${fmt(c.PD)} / ${fmt(c.T)}</b></div>
+  <div><span>Spese singole</span><b>${fmt(c.E)}</b></div><div><span>Spesa comune da dividere</span><b>${fmt(c.common)}</b></div>`;
+}
+
+function render() {
+  const n = S.people.length;
+  const labels = ['Persone', 'Spese', 'Risultati'];
+  app.innerHTML = `<nav class="stepper" aria-label="Passaggi">${labels.map((l, i) => `<button data-a="go" data-n="${i}" class="${S.step === i ? 'on' : ''}" ${i > 0 && n < 2 ? 'disabled' : ''} ${S.step === i ? 'aria-current="step"' : ''}>${l}</button>`).join('')}</nav>` +
+    [viewPeople, viewExpenses, viewResults][S.step]();
+  bar.innerHTML = S.step === 0 ? `<button class="btn" data-a="go" data-n="1" ${n < 2 ? 'disabled' : ''}>Avanti</button>`
+    : S.step === 1 ? `<button class="btn ghost" data-a="go" data-n="0">Indietro</button><button class="btn" data-a="go" data-n="2">Calcola</button>`
+    : `<button class="btn ghost" data-a="go" data-n="1">Indietro</button><button class="btn" data-a="copy">Copia riepilogo</button>`;
+  updateMeta();
+}
+
+function go(n) {
+  if (n > 0 && S.people.length < 2) return toast('Servono almeno due persone');
+  S.step = n; save(); render(); window.scrollTo(0, 0);
+}
+
+let tt;
+function toast(t) { const e = $('#toast'); e.textContent = t; e.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => e.classList.remove('on'), 1800); }
+
+async function copyTxt(t) {
+  try { await navigator.clipboard.writeText(t); }
+  catch (e) { const a = document.createElement('textarea'); a.value = t; a.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); }
+  toast('Riepilogo copiato');
+}
+
+function addPerson() {
+  const i = $('#newname'), v = i.value.trim(); if (!v) return i.focus();
+  S.people.push({ id: uid(), name: v, paid: '', common: true });
+  save(); render(); $('#newname').focus();
+}
+
+/* ---------- eventi ---------- */
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-a]'); if (!b || b.matches('input')) return;
+  const id = b.dataset.id;
+  switch (b.dataset.a) {
+    case 'go': go(+b.dataset.n); break;
+    case 'addp': addPerson(); break;
+    case 'delp': S.people = S.people.filter(p => p.id !== id); S.extras = S.extras.filter(x => x.id !== id && x.pid !== id); save(); render(); break;
+    case 'adde': S.extras.push({ id: uid(), pid: S.people[0].id, desc: '', amount: '' }); save(); render(); break;
+    case 'dele': S.extras = S.extras.filter(x => x.id !== id); save(); render(); break;
+    case 'allpaid': {
+      const others = S.people.filter(p => p.id !== id).reduce((a, p) => a + toC(p.paid), 0), r = toC(S.total) - others;
+      P(id).paid = r > 0 ? (r / 100).toFixed(2) : ''; save(); render(); break;
+    }
+    case 'copy': { const t = summary(); t ? copyTxt(t) : toast('Completa prima i dati'); break; }
+    case 'wa': { const t = summary(); if (t) window.open('https://wa.me/?text=' + encodeURIComponent(t), '_blank'); break; }
+    case 'new': if (confirm('Cancellare tutti i dati e iniziare un nuovo conto?')) { S = fresh(); save(); render(); window.scrollTo(0, 0); } break;
+  }
+});
+
+function onField(e) {
+  const t = e.target, f = t.dataset.f, a = t.dataset.a, id = t.dataset.id;
+  if (a === 'tog' && e.type === 'change') { P(id).common = t.checked; save(); updateMeta(); return; }
+  if (!f || f === 'newname') return;
+  const v = t.value;
+  if (f === 'title') S.title = v;
+  else if (f === 'total') S.total = v;
+  else if (f === 'paid') P(id).paid = v;
+  else if (f === 'examt') X(id).amount = v;
+  else if (f === 'exdesc') X(id).desc = v;
+  else if (f === 'expid') X(id).pid = v;
+  save(); updateMeta();
+}
+app.addEventListener('input', onField);
+app.addEventListener('change', onField);
+app.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'newname') { e.preventDefault(); addPerson(); } });
+
+/* ---------- PWA: icone, manifest dinamico, service worker ---------- */
+function mkIcon(s) {
+  const c = document.createElement('canvas'); c.width = c.height = s;
+  const x = c.getContext('2d');
+  x.fillStyle = '#7B61FF'; x.fillRect(0, 0, s, s);
+  x.fillStyle = '#fff'; x.font = `700 ${Math.round(s * .56)}px ui-rounded,system-ui,sans-serif`;
+  x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('÷', s / 2, s * .53);
+  return c.toDataURL('image/png');
+}
+(function pwa() {
+  const i192 = mkIcon(192), i512 = mkIcon(512);
+  const add = (rel, href) => { const l = document.createElement('link'); l.rel = rel; l.href = href; document.head.appendChild(l); };
+  add('apple-touch-icon', mkIcon(180)); add('icon', i192);
+  const base = new URL('./', location.href).href;
+  const m = { name: 'DivideConto', short_name: 'DivideConto', lang: 'it', start_url: base, scope: base, display: 'standalone',
+    background_color: '#0E1016', theme_color: '#0E1016',
+    icons: [{ src: i192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' }, { src: i512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }] };
+  add('manifest', 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(m)));
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => {});
+})();
+
+if (S.step > 0 && S.people.length < 2) S.step = 0;
+render();
+</script>
+</body>
+</html>
